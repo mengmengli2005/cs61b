@@ -82,7 +82,5 @@ public class Planet {
 	public void draw() {
 		String drawPic = "images/" + this.imgFileName;
 		StdDraw.picture(this.xxPos, this.yyPos, drawPic);
-		//StdDraw.show();
-		// StdDraw.pause(2000);//这里需要延时吗???
 	}
 }
