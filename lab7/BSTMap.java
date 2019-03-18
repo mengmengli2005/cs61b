@@ -1,46 +1,43 @@
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Set;
 
 public class BSTMap<K extends Comparable, V> implements Map61B<K, V> {
-    public int size;
-    public bst node;
+    BST bst;
+    int size;
 
     public BSTMap() {
-        size = 0;
+        this.bst = new BST();
+        this.size = 0;
     }
 
     @Override
     public void clear() {
-        this.node = null;
-        size = 0;
+        this.bst = new BST();
+        this.size = 0;
     }
 
     @Override
     public V get(K key) {
-        if (node == null || !this.containsKey(key)) {return null;}
-        if (node.key.equals(key)) {return node.val;}
-        else if (node.key.compareTo(key) > 0) {return node.left.get(node.left, key).val;}
-        else {return node.right.get(node.right, key).val;}
+        if (key == null) return null;
+        BSTNode node = bst.get(bst.root, key);
+        if (node == null) return null;
+        else return node.val;
     }
 
     @Override
     public void put(K key, V value) {
-        if (node == null) {node = new bst(key, value); size += 1;}
-        else {
-            bst lookup = node.get(node, key);
-            if (lookup != null) {lookup.val = value;}
-            else {
-                node = node.insect(node, key, value);
-                size += 1;
-            }
+        BSTNode tmp = bst.get(bst.root, key);
+        if (tmp != null) {
+            tmp.val = value;
+            return;
         }
+        bst.insert(key, value);
+        size ++;
     }
 
     @Override
     public boolean containsKey(K key) {
-        if (node == null) {return false;}
-        return node.get(node, key) != null;
+        return get(key) != null;
     }
 
     @Override
@@ -48,31 +45,42 @@ public class BSTMap<K extends Comparable, V> implements Map61B<K, V> {
         return size;
     }
 
-    private class bst {
-        private K key;
-        private V val;
-        private bst left;
-        private bst right;
+    private class BSTNode{
+       private K key;
+       private V val;
+       private BSTNode left;
+       private BSTNode right;
 
-        public bst(K k, V v, bst l, bst r) {
-            key = k; val = v; left = l; right = r;
-        }
-        public bst(K k, V v) {
-            key = k; val = v;
-        }
+       BSTNode(K key, V val) {
+           this.key = key;
+           this.val = val;
+       }
+    }
 
-        bst get(bst T, K key) {
-            if (T == null) {return null;}
-            if (T.key.equals(key)) {return T;}
-            else if (T.key.compareTo(key) > 0) {return get(T.left, key);}
-            else {return get(T.right, key);}
+    private class BST {
+        private BSTNode root;
+
+        BST() {
         }
 
-        bst insect(bst T, K key, V value) {
-            if (T == null) {return new bst(key, value);}
-            if (T.key.compareTo(key) > 0) {T.left = insect(T.left, key, value);}
-            else if (T.key.compareTo(key) < 0) {T.right = insect(T.right, key, value);}
-            return T;
+        BSTNode get(BSTNode node, K key) {
+            if (key == null) return null;
+            if (node == null) return null;
+            if (key.equals(node.key)) return node;
+            else if (key.compareTo(node.key) < 0) return get(node.left, key);
+            else return get(node.right, key);
+        }
+
+        void insert(K key, V value) {
+            if (key == null) throw new ExceptionInInitializerError();
+            root = helper(root, key, value);
+        }
+
+        BSTNode helper(BSTNode node, K key, V value) {
+            if (node == null) return new BSTNode(key, value);
+            if (key.compareTo(node.key) < 0) node.left = helper(node.left, key, value);
+            else if (key.compareTo(node.key) > 0) node.right = helper(node.right, key, value);
+            return node;
         }
 
     }
