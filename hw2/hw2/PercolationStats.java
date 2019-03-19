@@ -3,7 +3,9 @@ import edu.princeton.cs.introcs.StdRandom;
 
 public class PercolationStats {
     double[] Possibility;
-    double MeanOfPossibility;
+//    double MeanOfPossibility;
+//    double StandardDeviation;
+//    double[] ConfidenceInterval;
 
     // perform T independent experiments on an N-by-N grid
     public PercolationStats(int N, int T, PercolationFactory pf) {
@@ -13,9 +15,7 @@ public class PercolationStats {
             Percolation P = pf.make(N);
             Possibility[i] = Trail(P, N);
         }
-
-        MeanOfPossibility = mean();
-
+        this.Possibility = Possibility;
     }
 
     // A trail: calculation p/p* for a single N*N Percolation.
@@ -30,28 +30,42 @@ public class PercolationStats {
 
     public double sum() {
         double accumulate = 0;
-        for (int i = 0; i < Possibility.length; i ++) accumulate += this.Possibility[i];
+        for (double p: Possibility) accumulate += p;
         return accumulate;
     }
 
     // sample mean of percolation threshold
-    public double mean() {
-        return sum() / Possibility.length;
-    }
+    public double mean() { return sum() / Possibility.length; }
 
     // sample standard deviation of percolation threshold
     public double stddev() {
-        return 0.0;
+        double accumulate = 0;
+        double Mean = mean();
+        for (double p: Possibility) accumulate += (p - Mean) * (p - Mean);
+        return accumulate / (Possibility.length - 1);
     }
 
     // low endpoint of 95% confidence interval
     public double confidenceLow() {
-        return 0.0;
+        return mean() - 1.96 * Math.sqrt(stddev()) / Math.sqrt(Possibility.length);
     }
 
     // high endpoint of 95% confidence interval
     public double confidenceHigh() {
-        return 0.0;
+        return mean() + 1.96 * Math.sqrt(stddev()) / Math.sqrt(Possibility.length);
     }
 
+
+    public static void main(String[] args) {
+        PercolationFactory pf = new PercolationFactory();
+        PercolationStats PS = new PercolationStats(100, 100, pf);
+
+        double MeanOfPossibility = PS.mean();
+        System.out.println("The sample mean of percolation threshold is: " + MeanOfPossibility);
+        double StandardDeviation = PS.stddev();
+        System.out.println("The sample standard deviation of percolation threshold is: " + StandardDeviation);
+        double[] ConfidenceInterval = {PS.confidenceLow(), PS.confidenceHigh()};
+        System.out.println("The 95% confidence interval of percolation threshold is: " + ConfidenceInterval);
+
+    }
 }

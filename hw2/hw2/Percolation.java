@@ -32,8 +32,8 @@ public class Percolation {
     private void unionOthers(int row, int col) {
         if (isException(row, col)) throw new IllegalArgumentException();
         int N = Grid[0].length;
-        if (row == 0) GridUF.union(rcTo1D(row, col), N * N - 2); // opened sites in the first row be union with the virtual top site.
-        if (row == N - 1) GridUF.union(rcTo1D(row, col), N * N - 1); // opened sites in the last row be union with the virtual bottom site.
+        if (row == 0) GridUF.union(rcTo1D(row, col), N * N); // opened sites in the first row be union with the virtual top site.
+        if (row == N - 1) GridUF.union(rcTo1D(row, col), N * N + 1); // opened sites in the last row be union with the virtual bottom site.
         if (!isException(row, col - 1) && Grid[row][col - 1].openness) GridUF.union(rcTo1D(row, col), rcTo1D(row, col - 1));
         if (!isException(row, col + 1) && Grid[row][col + 1].openness) GridUF.union(rcTo1D(row, col), rcTo1D(row, col + 1));
         if (!isException(row - 1, col) && Grid[row - 1][col].openness) GridUF.union(rcTo1D(row, col), rcTo1D(row - 1, col));
@@ -50,7 +50,7 @@ public class Percolation {
     public boolean isFull(int row, int col) { // 还有bug: 考虑Hug的PPT最后一页
         int N = Grid[0].length;
         if (isException(row, col)) throw new IllegalArgumentException();
-        return GridUF.connected(rcTo1D(row, col), N * N - 2);
+        return GridUF.connected(rcTo1D(row, col), N * N);
     }
 
     // number of open sites
@@ -61,7 +61,7 @@ public class Percolation {
     // does the system percolate?
     public boolean percolates() {
         int N = Grid[0].length;
-        return GridUF.connected(N * N - 2, N * N - 1);
+        return GridUF.connected(N * N, N * N + 1);
     }
 
     private int rcTo1D(int row, int col) {
@@ -72,12 +72,11 @@ public class Percolation {
 
     private boolean isException(int row, int col) {
         int N = this.Grid[0].length;
-        return (row <= 0 || col <= 0 || row >= N || col >= N);
+        return (row < 0 || col < 0 || row >= N || col >= N);
     }
 
     private class site {
         boolean openness;
-        boolean fullness;
 
         public site() {
             openness = false;
@@ -86,6 +85,18 @@ public class Percolation {
 
     // use for unit testing (not required, but keep this here for the autograder)
     public static void main(String[] args) {
+        Percolation perc = new Percolation(4);
+        System.out.println("The number of opened sites is: " + perc.openSize);
+        System.out.println("Is the percolation percolate? " + perc.percolates());
 
+        perc.open(0, 1);
+        perc.open(1, 1);
+        perc.open(1, 2);
+        perc.open(1, 3);
+        perc.open(2, 2);
+        System.out.println("The number of opened sites is? Expected: 5;  Reality: " + perc.openSize);
+        System.out.println("Is (2,2) full? Expected: true;  Reality: " + perc.isFull(2, 2));
+        System.out.println("Is (2,2) opened? Expected: true;  Reality: " + perc.Grid[2][2].openness);
+        System.out.println("Is the percolation percolate? Expected: false;  Reality: " + perc.percolates());
     }
 }
