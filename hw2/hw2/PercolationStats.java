@@ -58,7 +58,7 @@ public class PercolationStats {
 
     public static void main(String[] args) {
         PercolationFactory pf = new PercolationFactory();
-        PercolationStats PS = new PercolationStats(100, 100, pf);
+        PercolationStats PS = new PercolationStats(500, 100, pf);
 
         double MeanOfPossibility = PS.mean();
         System.out.println("The sample mean of percolation threshold is: " + MeanOfPossibility);

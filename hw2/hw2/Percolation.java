@@ -6,6 +6,7 @@ public class Percolation {
     site[][] Grid;
     WeightedQuickUnionUF GridUF;
     int openSize;
+    boolean percoltateStatue;
 
     // create N-by-N grid, with all sites initially blocked
     public Percolation(int N) {
@@ -16,8 +17,9 @@ public class Percolation {
                 Grid[i][j] = new site();
             }
         }
-        GridUF = new WeightedQuickUnionUF(N * N + 2); // N*N: number of real sites; 2: one virtual top site and one virtual bottom site.
+        GridUF = new WeightedQuickUnionUF(N * N + 1); // N*N: number of real sites; 2: one virtual top site and one virtual bottom site.
         openSize = 0;
+        percoltateStatue = false;
     }
 
     // open the site (row, col) if it is not open already
@@ -33,11 +35,14 @@ public class Percolation {
         if (isException(row, col)) throw new IllegalArgumentException();
         int N = Grid[0].length;
         if (row == 0) GridUF.union(rcTo1D(row, col), N * N); // opened sites in the first row be union with the virtual top site.
-        if (row == N - 1) GridUF.union(rcTo1D(row, col), N * N + 1); // opened sites in the last row be union with the virtual bottom site.
         if (!isException(row, col - 1) && Grid[row][col - 1].openness) GridUF.union(rcTo1D(row, col), rcTo1D(row, col - 1));
         if (!isException(row, col + 1) && Grid[row][col + 1].openness) GridUF.union(rcTo1D(row, col), rcTo1D(row, col + 1));
         if (!isException(row - 1, col) && Grid[row - 1][col].openness) GridUF.union(rcTo1D(row, col), rcTo1D(row - 1, col));
         if (!isException(row + 1, col) && Grid[row + 1][col].openness) GridUF.union(rcTo1D(row, col), rcTo1D(row + 1, col));
+
+        if (row == N - 1) {
+            if (GridUF.connected(rcTo1D(row, col), N * N)) percoltateStatue = true;
+        }
     }
 
     // is the site (row, col) open?
@@ -60,8 +65,9 @@ public class Percolation {
 
     // does the system percolate?
     public boolean percolates() {
-        int N = Grid[0].length;
-        return GridUF.connected(N * N, N * N + 1);
+//        int N = Grid[0].length;
+//        return GridUF.connected(N * N, N * N + 1);
+        return percoltateStatue;
     }
 
     private int rcTo1D(int row, int col) {
