@@ -25,10 +25,10 @@ public class FlightSolver {
 
         // 2.Construct timeNodePQ using flights data.
         PriorityQueue<Node> timeNodePQ = new PriorityQueue<>();
-        for (int i = 0; i < flights.size(); i += 1) {
+        for (int i = 0; i < flights.size(); i ++) {
             Node startNode = new Node(flights.get(i).startTime, i);
             timeNodePQ.add(startNode);
-            Node endNode = new Node(-1 * flights.get(i).endTime, i);
+            Node endNode = new Node(-flights.get(i).endTime, i);
             timeNodePQ.add(endNode);
         }
 
@@ -40,13 +40,20 @@ public class FlightSolver {
         // 3.Scan the "time line": PQ.pop() nodes to find "globalMax".
         int globalMax = 0;
         int cur = 0;
-        for (int i = 0; i < timeNodePQ.size(); i += 1) {
+        while(!timeNodePQ.isEmpty()) {
             Node node = timeNodePQ.poll();
             if (node.value < 0) cur = cur - flights.get(node.index).passengers;
             else cur = cur + flights.get(node.index).passengers;
 
             if (globalMax < cur) globalMax = cur;
         }
+//        for (int i = 0; i < timeNodePQ.size(); i += 1) {
+//            Node node = timeNodePQ.poll();
+//            if (node.value < 0) cur = cur - flights.get(node.index).passengers;
+//            else cur = cur + flights.get(node.index).passengers;
+//
+//            if (globalMax < cur) globalMax = cur;
+//        }
         return globalMax;
     }
 
@@ -62,7 +69,7 @@ public class FlightSolver {
 
         @Override
         public int compareTo(Node o) {
-            if (this.value == -1 * o.value && this.value != 0) return -1 * (this.value - o.value);
+            if (this.value == -o.value && this.value != 0) return -(this.value - o.value);
             return Math.abs(this.value) - Math.abs(o.value);
         }
     }
@@ -70,13 +77,13 @@ public class FlightSolver {
 
     // 1.PriorityQueue construction.
     PriorityQueue<Node> pq = new PriorityQueue<>(
-            new Comparator<Node>() {
-                @Override
-                public int compare(Node o1, Node o2) {
-                    if (o1.value == -1 * o2.value && o1.value != 0) return -1 * (o1.value - o2.value);
-                    return Math.abs(o1.value) - Math.abs(o2.value);
-                }
-            }
+//            new Comparator<Node>() {
+//                @Override
+//                public int compare(Node o1, Node o2) {
+//                    if (o1.value == -1 * o2.value && o1.value != 0) return -1 * (o1.value - o2.value);
+//                    return Math.abs(o1.value) - Math.abs(o2.value);
+//                }
+//            }
     );
 
 
