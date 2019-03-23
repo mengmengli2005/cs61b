@@ -108,8 +108,19 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
         validateSinkSwimArg(index);
 
         /** TODO: Your code here. */
-        while (parentIndex(index) != 0) {
-            if (min(index, parentIndex(index)) != index) return;
+//        while (parentIndex(index) != 0) {
+//            if (min(index, parentIndex(index)) != index) return;
+//            swap(index, parentIndex(index));
+//            swim(parentIndex(index));
+//        }
+//        while (index != 1) {
+//            if (min(index, parentIndex(index)) != index) return;
+//            swap(index, parentIndex(index));
+//            //swim(parentIndex(index));
+//            index = parentIndex(index);
+//        }
+        if (index == 1) return;
+        if (min(index, parentIndex(index)) == index) {
             swap(index, parentIndex(index));
             swim(parentIndex(index));
         }
@@ -125,17 +136,16 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
         /** TODO: Your code here. */
         int left = leftIndex(index);
         int right = rightIndex(index);
-        while (inBounds(left) || inBounds(right)) { // 直到index为叶子节点的时候停止recursion
-            if (min(index, left) == index && min(index, right) == index) return;
-            if (min(index, left) == left) {
+
+            if (min(index, left) == left && min(left, right) == left) {
                 swap(index, left);
                 sink(left);
             }
-            else if (min(index, right) == right) {
+            else if (min(index, right) == right && min(left, right) == right) {
                 swap(index, right);
                 sink(right);
             }
-        }
+
     }
 
     /**
