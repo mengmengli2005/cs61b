@@ -1,0 +1,4 @@
+1. We have a word/number puzzle class whose helper methods can figure out the "distance" from current node to target node;
+2. Create a "Solver" class:
+    2.1 takes in the source stats (like a initial word) as the source node of the "Graph";
+    2.2 uses a PriorityQueue to record and find the "best-first search" stats;
